@@ -29,9 +29,9 @@ public class JSONTextComponent extends JSONComponent {
 	}
 
 	@Override
-	public void setValue(JSONObject object) {
+	public void setValue(JSONObject object, ComponentValueType type) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 }

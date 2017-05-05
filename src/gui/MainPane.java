@@ -1,20 +1,17 @@
 package gui;
 
-import org.apache.pivot.wtk.FillPane;
-import org.apache.pivot.wtk.Orientation;
+import java.util.List;
 
-public class MainPane extends FillPane {
+import org.apache.pivot.wtk.Orientation;
+import org.apache.pivot.wtk.SplitPane;
+
+import gui.components.ComponentValueType;
+
+public class MainPane extends SplitPane implements ActionListener {
 	private ComponentController componentController;
 	private ActionController actionController;
 	private NavigationController navigationController;
 
-	public MainPane(ComponentController componentController, ActionController actionController,
-			NavigationController navigationController) {
-		super();
-		this.componentController = componentController;
-		this.actionController = actionController;
-		this.navigationController = navigationController;
-	}
 
 	public MainPane(Orientation orientation, ComponentController componentController, ActionController actionController,
 			NavigationController navigationController) {
@@ -22,6 +19,8 @@ public class MainPane extends FillPane {
 		this.componentController = componentController;
 		this.actionController = actionController;
 		this.navigationController = navigationController;
+		
+		actionController.addActionListener(this);
 	}
 
 	public ComponentController getComponentController() {
@@ -34,6 +33,21 @@ public class MainPane extends FillPane {
 
 	public NavigationController getNavigationController() {
 		return navigationController;
+	}
+
+	@Override
+	public void actionPerformed(String actionName, List<String> fields) {
+		System.out.println(actionName);
+		for(String field:fields){
+			System.out.println(field);
+			try {
+				System.out.println(componentController.getSingleResult(field, ComponentValueType.SELECTION).toString());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 	}
 	
 

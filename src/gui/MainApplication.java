@@ -1,30 +1,16 @@
 package gui;
 
-import java.awt.Font;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
-import javax.swing.JTextArea;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.function.Consumer;
+
 import org.apache.pivot.collections.Map;
 import org.apache.pivot.wtk.Application;
-import org.apache.pivot.wtk.BoxPane;
-import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.Display;
-import org.apache.pivot.wtk.FillPane;
-import org.apache.pivot.wtk.HorizontalAlignment;
-import org.apache.pivot.wtk.Label;
-import org.apache.pivot.wtk.ListView;
-import org.apache.pivot.wtk.Orientation;
-import org.apache.pivot.wtk.Panel;
-import org.apache.pivot.wtk.ScrollPane;
-import org.apache.pivot.wtk.ScrollPane.ScrollBarPolicy;
-import org.apache.pivot.wtk.TextArea;
-import org.apache.pivot.wtk.TextInput;
-import org.apache.pivot.wtk.VerticalAlignment;
 import org.apache.pivot.wtk.Window;
 import org.json.JSONObject;
-
-import gui.components.ComponentValueType;
 
 public class MainApplication implements Application {
 	private Window window;
@@ -44,42 +30,39 @@ public class MainApplication implements Application {
 	@Override
 	public void startup(Display disp, Map<String, String> arg1) throws Exception {
 
+		
+		
 		window = new Window();
+		
+		URL yahoo = new URL("http://127.0.0.1:8001");
+        URLConnection yc = yahoo.openConnection();
+        BufferedReader in = new BufferedReader(
+                                new InputStreamReader(
+                                yc.getInputStream()));
+        StringBuilder result = new StringBuilder();
+        in.lines().forEach(new Consumer<String>() {
 
-		StringBuilder data = new StringBuilder();
-		Scanner scanner = null;
-		try {
-			scanner = new Scanner(new File("test.json"));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		while (scanner.hasNextLine()) {
-			data.append(scanner.nextLine() + "\r\n");
-		}
-		StringBuilder metaData = new StringBuilder();
-		scanner = null;
-		try {
-			scanner = new Scanner(new File("test_meta.json"));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		while (scanner.hasNextLine()) {
-			metaData.append(scanner.nextLine() + "\r\n");
-		}
+			@Override
+			public void accept(String t) {
+				result.append(t);
+			}
+		});
+        JSONObject received = new JSONObject(result.toString());
+		
 		
 
-		JSONObject dataObject = new JSONObject(data.toString());
-		JSONObject metaDataObject = new JSONObject(metaData.toString());
+		JSONObject dataObject = received.getJSONObject("data");
+		JSONObject metaDataObject = received.getJSONObject("meta");
+		System.out.println(received.toString());
 		MainPane mainPane = Renderer.render(dataObject, metaDataObject);
 		window.setContent(mainPane);
+		
+		window.setTitle(metaDataObject.getString("title"));
 		
 		window.open(disp);
 		
 		window.setMaximized(true);
 		
-		System.out.println(mainPane.getComponentController().getSingleResult("firstname", ComponentValueType.CONTENT).toString());
 	}
 
 	@Override

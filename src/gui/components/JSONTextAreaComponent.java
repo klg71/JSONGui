@@ -7,12 +7,9 @@ import org.json.JSONObject;
 public class JSONTextAreaComponent extends JSONComponent {
 
 	private TextArea area;
-	private ScrollPane scrollPane;
-	
 	public JSONTextAreaComponent(String name, TextArea area, ScrollPane scrollPane) {
 		super(name, scrollPane);
 		this.area = area;
-		this.scrollPane = scrollPane;
 	}
 
 	
@@ -31,12 +28,10 @@ public class JSONTextAreaComponent extends JSONComponent {
 		return object;
 	}
 
-
-
 	@Override
-	public void setValue(JSONObject object) {
+	public void setValue(JSONObject object, ComponentValueType type) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 }

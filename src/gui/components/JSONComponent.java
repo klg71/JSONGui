@@ -12,7 +12,7 @@ public abstract class JSONComponent {
 		object.put("name", name);
 		return object;
 	}
-	public abstract void setValue(JSONObject object);
+	public abstract void setValue(JSONObject object, ComponentValueType type);
 	
 	public JSONComponent(String name, Component component) {
 		super();
