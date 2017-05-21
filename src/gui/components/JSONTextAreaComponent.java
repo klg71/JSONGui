@@ -12,11 +12,8 @@ public class JSONTextAreaComponent extends JSONComponent {
 		this.area = area;
 	}
 
-	
-	
 	@Override
 	public JSONObject getValue(ComponentValueType type) {
-		// TODO Auto-generated method stub
 		JSONObject object = super.getValue(type);
 		switch(type){
 		case CONTENT:
@@ -30,8 +27,7 @@ public class JSONTextAreaComponent extends JSONComponent {
 
 	@Override
 	public void setValue(JSONObject object, ComponentValueType type) {
-		// TODO Auto-generated method stub
-		
+		area.setText(object.getString("value"));
 	}
 
 }

@@ -1,6 +1,7 @@
 package gui;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -12,8 +13,10 @@ import org.apache.pivot.wtk.Display;
 import org.apache.pivot.wtk.Window;
 import org.json.JSONObject;
 
-public class MainApplication implements Application {
+public class MainApplication implements Application, Context {
 	private Window window;
+	private JSONController jsonController;
+	private Display display;
 
 	@Override
 	public void resume() throws Exception {
@@ -30,44 +33,60 @@ public class MainApplication implements Application {
 	@Override
 	public void startup(Display disp, Map<String, String> arg1) throws Exception {
 
-		
+		jsonController = new JSONController();
 		
 		window = new Window();
+		this.display = disp;
 		
-		URL yahoo = new URL("http://127.0.0.1:8001");
-        URLConnection yc = yahoo.openConnection();
-        BufferedReader in = new BufferedReader(
-                                new InputStreamReader(
-                                yc.getInputStream()));
-        StringBuilder result = new StringBuilder();
-        in.lines().forEach(new Consumer<String>() {
+		
+        JSONObject received = jsonController.getStartPage();
+		
+		reloadWindow(received);
 
-			@Override
-			public void accept(String t) {
-				result.append(t);
-			}
-		});
-        JSONObject received = new JSONObject(result.toString());
 		
 		
-
+	}
+	
+	private void reloadWindow(JSONObject received){
 		JSONObject dataObject = received.getJSONObject("data");
 		JSONObject metaDataObject = received.getJSONObject("meta");
 		System.out.println(received.toString());
 		MainPane mainPane = Renderer.render(dataObject, metaDataObject);
+		mainPane.addContext(this);
+		
 		window.setContent(mainPane);
 		
 		window.setTitle(metaDataObject.getString("title"));
 		
-		window.open(disp);
+		window.open(display);
 		
 		window.setMaximized(true);
-		
 	}
 
 	@Override
 	public void suspend() throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void actionPerformed(JSONObject action) {
+		try {
+			reloadWindow(jsonController.act(action));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	@Override
+	public void navigationPerformed(JSONObject navigation) {
+		try {
+			reloadWindow(jsonController.navigate(navigation));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 	}
 }

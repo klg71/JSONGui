@@ -10,6 +10,18 @@ import gui.components.ComponentValueType;
 import gui.components.JSONComponent;
 
 public class ComponentController {
+	
+	public class ComponentNotFoundException extends Exception {
+		/**
+		 * Thrown when component could not be found in controller
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public ComponentNotFoundException(String name){
+			super("Component not found: "+name);
+		}
+	}
+	
 	private HashMap<String, JSONComponent> componentMap;
 
 	public ComponentController() {
@@ -20,12 +32,12 @@ public class ComponentController {
 		componentMap.put(name, component);
 	}
 
-	public JSONObject getSingleResult(String name,ComponentValueType type) throws Exception {
+	public JSONObject getSingleResult(String name,ComponentValueType type) throws ComponentNotFoundException {
 		JSONObject result = null;
 		try {
 			result = componentMap.get(name).getValue(type);
 		} catch (Exception e) {
-			throw new Exception("Component not found");
+			throw new ComponentNotFoundException(name);
 		}
 		return result;
 	}

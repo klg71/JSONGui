@@ -3,13 +3,16 @@ package gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.pivot.json.JSON;
 import org.apache.pivot.wtk.Action;
 import org.apache.pivot.wtk.Button;
 import org.apache.pivot.wtk.Component;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class ActionController {
 	
-	private ArrayList<ActionListener> listeners;
+	private ArrayList<PaneListener> listeners;
 	
 	private class JSONAction extends Action{
 		private ActionController actionController;
@@ -34,7 +37,7 @@ public class ActionController {
 		listeners = new ArrayList<>();
 	}
 	
-	public void addActionListener(ActionListener listener){
+	public void addActionListener(PaneListener listener){
 		listeners.add(listener);
 	}
 	
@@ -43,7 +46,7 @@ public class ActionController {
 	}
 	
 	private void actionPerformed(String name, List<String> fields){
-		for(ActionListener listener: listeners){
+		for(PaneListener listener: listeners){
 			listener.actionPerformed(name, fields);
 		}
 	}
