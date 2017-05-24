@@ -28,6 +28,7 @@ public class MainPane extends SplitPane implements PaneListener {
 		this.navigationController = navigationController;
 
 		actionController.addActionListener(this);
+		navigationController.addListener(this);
 		contexts = new ArrayList<>();
 	}
 
@@ -51,15 +52,12 @@ public class MainPane extends SplitPane implements PaneListener {
 
 		System.out.println(actionName);
 		for (String field : fields) {
-			JSONObject jsonField = new JSONObject();
-			jsonField.put("name", field);
 			try {
-				jsonField.put("value",
-						componentController.getSingleResult(field, ComponentValueType.SELECTION).toString());
+				System.out.println(componentController.getSingleResult(field, ComponentValueType.SELECTION));
+				jsonFields.put(componentController.getSingleResult(field, ComponentValueType.SELECTION));
 			} catch (ComponentNotFoundException e) {
 				e.printStackTrace();
 			}
-			System.out.println(field);
 		}
 		action.put("fields", jsonFields);
 		for (Context context : contexts) {
@@ -73,6 +71,7 @@ public class MainPane extends SplitPane implements PaneListener {
 
 	@Override
 	public void navigationPerformed(String name) {
+		System.out.println("navigates");
 		JSONObject navigation = new JSONObject();
 		navigation.put("name", name);
 		for (Context context : contexts) {

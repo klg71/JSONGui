@@ -18,7 +18,6 @@ public class NavigationController {
 		
 		public JSONAction(NavigationController navigationController, String name) {
 			super();
-			listeners = new ArrayList<>();
 			this.navigationController = navigationController;
 			this.name = name;
 		}
@@ -28,6 +27,10 @@ public class NavigationController {
 			navigationController.actionPerformed(name);
 		}
 		
+	}
+	
+	public NavigationController(){
+		listeners = new ArrayList<>();
 	}
 	
 	public void addListener(PaneListener listener){

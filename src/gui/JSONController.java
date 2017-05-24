@@ -47,18 +47,16 @@ public class JSONController {
 		// Execute and get the response.
 		HttpResponse response = httpclient.execute(httppost);
 		HttpEntity entity = response.getEntity();
+		BufferedReader in = new BufferedReader(new InputStreamReader(entity.getContent()));
 		StringBuilder result = new StringBuilder();
-		if (entity != null) {
-			Scanner scanner = new Scanner(entity.getContent());
-			try {
-				while (scanner.hasNext()) {
-					result.append(scanner.next());
-				}
+		in.lines().forEach(new Consumer<String>() {
 
-			} finally {
-				scanner.close();
+			@Override
+			public void accept(String t) {
+				result.append(t);
 			}
-		}
+		});
+		System.out.println(result.toString());
 		return new JSONObject(result.toString());
 	}
 
@@ -84,6 +82,7 @@ public class JSONController {
 	}
 
 	public JSONObject navigate(JSONObject navigation) throws IOException {
+		System.out.println(navigation);
 		return sendRequest(navigation);
 	}
 

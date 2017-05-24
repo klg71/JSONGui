@@ -24,15 +24,20 @@ public class JSONTableComponent extends JSONComponent {
 		JSONObject returnObject = super.getValue(type);
 		switch (type) {
 		case SELECTION:
-			@SuppressWarnings("unchecked")
-			Map<String, String> data = (Map<String, String>) tableView.getTableData().get(tableView.getSelectedIndex());
-			Iterator<String> iterator = data.iterator();
-			JSONObject tableSelection = new JSONObject();
-			while (iterator.hasNext()) {
-				String key = iterator.next();
-				tableSelection.put(key, data.get(key));
+			if (tableView.getSelectedIndex() > -1) {
+				@SuppressWarnings("unchecked")
+				Map<String, String> data = (Map<String, String>) tableView.getTableData()
+						.get(tableView.getSelectedIndex());
+				Iterator<String> iterator = data.iterator();
+				JSONObject tableSelection = new JSONObject();
+				while (iterator.hasNext()) {
+					String key = iterator.next();
+					tableSelection.put(key, data.get(key));
+				}
+				returnObject.put("value", tableSelection);
+			} else {
+				returnObject.put("value", -1);
 			}
-			returnObject.put("value", tableSelection);
 			break;
 		case CONTENT:
 			@SuppressWarnings("unchecked")
