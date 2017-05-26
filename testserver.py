@@ -46,6 +46,8 @@ class MyHandler(SimpleHTTPRequestHandler):
                 return self.add_user(action)
             if action['name'] == 'save':
                 return self.save_user(action)
+            if action['name'] == 'delete':
+                return self.delete_user(action)
 
         self.send_response(200)
         self.send_header("Content-type", "text/json")
@@ -57,7 +59,6 @@ class MyHandler(SimpleHTTPRequestHandler):
         self.wfile.write(bytes(json.dumps(result), "utf-8"))
 
     def open_details(self, action):
-        user = {}
         user = action['fields']['users']
         for user_entry in users:
             if str(user_entry['id']) == user['id']:
@@ -107,6 +108,26 @@ class MyHandler(SimpleHTTPRequestHandler):
         else:
             users.append(user)
 
+        self.send_response(200)
+        self.send_header("Content-type", "text/json")
+        self.end_headers()
+        meta = {}
+        with open("meta_list.json", "r") as f:
+            meta = json.loads(f.read())
+        result = {'data': {"users": users}, "meta": meta}
+        self.wfile.write(bytes(json.dumps(result), "utf-8"))
+
+    def delete_user(self, action):
+        user = action['fields']['users']
+        found = False
+        userFound = None
+        for user_entry in users:
+            if str(user_entry['id']) == user['id']:
+                found = True
+                userFound = user_entry
+                break
+        if found:
+            users.remove(userFound)
         self.send_response(200)
         self.send_header("Content-type", "text/json")
         self.end_headers()
