@@ -1,0 +1,73 @@
+{
+"title":"Personal Data",
+"data":
+	[
+    {
+      "name":"id",
+      "displayname":"Id",
+      "type":"Integer",
+      "editable":false
+    },
+		{ "name":"firstname",
+		  "displayname":"Firstname",
+		  "type":"String"
+		},
+		{ "name":"lastname",
+		  "displayname":"Lastname",
+		  "type":"String"
+		},
+		{ "name":"city",
+		  "displayname":"City",
+		  "type":"String"
+		},
+		{ "name":"siblings",
+		  "displayname":"Siblings",
+		  "type":"List",
+		  "editable":true,
+		  "entry_type":"String"
+		},
+		{ "name":"trivia",
+		  "displayname":"Trivia",
+		  "type":"String"
+		}
+	],
+"actions":
+	[
+			{ "name":"save",
+			  "displayname":"Save changes",
+			  "fields": [
+          {
+            "name":"id",
+            "type":"value"
+          },
+          {
+            "name":"firstname",
+            "type":"value"
+          },
+          {
+            "name":"lastname",
+            "type":"value"
+          },
+          {
+            "name":"city",
+            "type":"value"
+          },
+          {
+            "name":"siblings",
+            "type":"value"
+          },
+          {
+            "name":"trivia",
+            "type":"value"
+          }
+			  ]
+			}
+	],
+"navigation":
+	[
+		{"name":"list",
+		 "displayname":"List all accounts"},
+		{"name":"add",
+		 "displayname":"Add new account"}
+	]
+}

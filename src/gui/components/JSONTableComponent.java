@@ -34,12 +34,12 @@ public class JSONTableComponent extends JSONComponent {
 					String key = iterator.next();
 					tableSelection.put(key, data.get(key));
 				}
-				returnObject.put("value", tableSelection);
+				returnObject.put("value",tableSelection);
 			} else {
-				returnObject.put("value", -1);
+				returnObject.put("value", new JSONObject());
 			}
 			break;
-		case CONTENT:
+		case VALUE:
 			@SuppressWarnings("unchecked")
 			List<Map<String, String>> tableData = (List<Map<String, String>>) tableView.getTableData();
 			JSONArray tableArray = new JSONArray();

@@ -16,7 +16,7 @@ public class JSONTextAreaComponent extends JSONComponent {
 	public JSONObject getValue(ComponentValueType type) {
 		JSONObject object = super.getValue(type);
 		switch(type){
-		case CONTENT:
+		case VALUE:
 			object.put("value", area.getText());
 			break;
 		case SELECTION:

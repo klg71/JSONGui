@@ -18,7 +18,7 @@ public class JSONTextComponent extends JSONComponent {
 		JSONObject object = new JSONObject(type);
 		object.put("name", name);
 		switch(type){
-		case CONTENT:
+		case VALUE:
 			object.put("value", component.getText());
 			break;
 		case SELECTION:

@@ -74,7 +74,7 @@ public class JSONListComponent extends JSONComponent {
 
 		JSONObject object = super.getValue(type);
 		switch (type) {
-		case CONTENT:
+		case VALUE:
 			JSONArray entries = new JSONArray();
 			for (Object entry : view.getListData()) {
 				entries.put(entry.toString());

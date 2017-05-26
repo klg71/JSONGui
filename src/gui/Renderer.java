@@ -26,6 +26,7 @@ import org.apache.pivot.wtk.TableViewHeader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import gui.components.ComponentValueType;
 import gui.components.JSONComponent;
 import gui.components.JSONListComponent;
 import gui.components.JSONTableComponent;
@@ -109,9 +110,10 @@ public class Renderer {
 		for (int i = 0; i < metaObject.length(); i++) {
 			JSONObject actionData = metaObject.getJSONObject(i);
 			PushButton button = new PushButton(actionData.getString("displayname"));
-			java.util.ArrayList<String> fields = new java.util.ArrayList<String>();
+			java.util.HashMap<String, ComponentValueType> fields = new java.util.HashMap<>();
 			for (int k = 0; k < actionData.getJSONArray("fields").length(); k++) {
-				fields.add(actionData.getJSONArray("fields").getString(k));
+				JSONObject field = actionData.getJSONArray("fields").getJSONObject(k);
+				fields.put(field.getString("name"), ComponentValueType.findByJSONName(field.getString("type")));
 			}
 			controller.addAction(actionData.getString("name"), button, fields);
 			actionPane.add(button);
@@ -131,7 +133,7 @@ public class Renderer {
 		Font font = (Font) label.getStyles().get("font");
 		label.setMinimumWidth((int) (maxLabelWidth * (font.getSize2D() * 0.7)));
 		JSONComponent component = null;
-		if (metaData.getString("type").equals("String")) {
+		if (metaData.getString("type").equals("String") || metaData.getString("type").equals("Integer")) {
 			component = buildDataTextfield(dataObject, metaData);
 		}
 		if (metaData.getString("type").equals("List")) {
@@ -141,7 +143,7 @@ public class Renderer {
 			component = buildDataTable(dataObject, metaData);
 			dataPanel.setOrientation(Orientation.VERTICAL);
 		}
-		
+
 		controller.addComponent(metaData.getString("name"), component);
 		if (component != null) {
 			dataPanel.add(label);
@@ -169,11 +171,11 @@ public class Renderer {
 
 			for (int k = 0; k < metaData.getJSONArray("columns").length(); k++) {
 				JSONObject columnData = metaData.getJSONArray("columns").getJSONObject(k);
-				map.put(columnData.getString("name"), rowData.getString(columnData.getString("name")));
+				map.put(columnData.getString("name"), rowData.get(columnData.get("name").toString()).toString());
 			}
 			tableData.add(map);
 		}
-		
+
 		TableView view = new TableView(tableData);
 		for (int i = 0; i < metaData.getJSONArray("columns").length(); i++) {
 			JSONObject actionData = metaData.getJSONArray("columns").getJSONObject(i);
@@ -183,10 +185,10 @@ public class Renderer {
 		}
 		TableViewHeader header = new TableViewHeader(view);
 		header.getStyles().put("includeTrailingVerticalGridLine", true);
-		//header.setTableView(view);
-		
+		// header.setTableView(view);
+
 		scrollPane.setColumnHeader(header);
-		
+
 		scrollPane.setVisible(true);
 		scrollPane.setEnabled(true);
 		scrollPane.setView(view);
@@ -196,7 +198,7 @@ public class Renderer {
 	}
 
 	public static JSONComponent buildDataTextfield(JSONObject dataObject, JSONObject metaData) {
-		String text = dataObject.getString(metaData.getString("name"));
+		String text = dataObject.get(metaData.getString("name")).toString();
 		if (text.length() > 50) {
 			return buildTextArea(dataObject, metaData);
 		} else {
@@ -205,7 +207,7 @@ public class Renderer {
 	}
 
 	public static JSONTextAreaComponent buildTextArea(JSONObject dataObject, JSONObject metaData) {
-		String text = dataObject.getString(metaData.getString("name"));
+		String text = dataObject.getString(metaData.get("name").toString());
 		ScrollPane scrollPane = new ScrollPane();
 		scrollPane.setPreferredHeight(200);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollBarPolicy.FILL);
@@ -226,8 +228,14 @@ public class Renderer {
 
 	public static JSONTextComponent buildTextinput(JSONObject dataObject, JSONObject metaData) {
 		TextInput input = new TextInput();
+
 		input.setPreferredWidth(componentWidth);
-		input.setText(dataObject.getString(metaData.getString("name")));
+		input.setText(dataObject.get(metaData.getString("name")).toString());
+		if (metaData.has("editable")) {
+			if (!metaData.getBoolean("editable")) {
+				input.setEditable(false);
+			}
+		}
 		JSONTextComponent textComponent = new JSONTextComponent(metaData.getString("name"), input);
 		return textComponent;
 	}

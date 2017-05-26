@@ -1,0 +1,43 @@
+{
+"title":"Account overview",
+"data":
+	[
+		{ "name":"users",
+		  "displayname":"Users",
+		  "type":"table",
+		  "columns": [
+        {
+          "name":"id",
+          "type":"Integer"
+        },
+			  {
+          "name":"firstname",
+			    "type":"String"
+			  },
+			  {
+          "name":"lastname",
+			    "type":"String"
+			  }
+		  ]
+		}
+	],
+"actions":
+	[
+			{ "name":"details",
+			  "displayname":"Open Details",
+			  "fields": [
+          {
+            "name":"users",
+            "type":"selection"
+          }
+			  ]
+			}
+	],
+"navigation":
+	[
+		{"name":"list",
+		 "displayname":"List all accounts"},
+		{"name":"add",
+		 "displayname":"Add new account"}
+	]
+}

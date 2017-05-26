@@ -2,6 +2,7 @@ package gui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.pivot.json.JSON;
 import org.apache.pivot.wtk.Orientation;
@@ -45,16 +46,15 @@ public class MainPane extends SplitPane implements PaneListener {
 	}
 
 	@Override
-	public void actionPerformed(String actionName, List<String> fields) {
+	public void actionPerformed(String actionName, Map<String,ComponentValueType> fields) {
 		JSONObject action = new JSONObject();
 		action.put("name", actionName);
-		JSONArray jsonFields = new JSONArray();
+		JSONObject jsonFields = new JSONObject();
 
 		System.out.println(actionName);
-		for (String field : fields) {
+		for (Map.Entry<String, ComponentValueType> entry:fields.entrySet()) {
 			try {
-				System.out.println(componentController.getSingleResult(field, ComponentValueType.SELECTION));
-				jsonFields.put(componentController.getSingleResult(field, ComponentValueType.SELECTION));
+				jsonFields.put(entry.getKey(),componentController.getSingleResult(entry.getKey(), entry.getValue()).get("value"));
 			} catch (ComponentNotFoundException e) {
 				e.printStackTrace();
 			}
