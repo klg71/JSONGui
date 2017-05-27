@@ -8,6 +8,12 @@
       "type":"Integer",
       "editable":false
     },
+    {
+      "name":"length",
+      "displayname":"Length",
+      "type":"Double",
+      "precision":3
+    },
 		{ "name":"firstname",
 		  "displayname":"Firstname",
 		  "type":"String"
@@ -46,6 +52,10 @@
           },
           {
             "name":"lastname",
+            "type":"value"
+          },
+          {
+            "name":"length",
             "type":"value"
           },
           {

@@ -18,8 +18,8 @@ public class JSONListComponent extends JSONComponent {
 
 	private ListView view;
 
-	public JSONListComponent(String name, ListView view) {
-		super(name, view);
+	public JSONListComponent(ListView view, ComponentType type, JSONObject dataObject, JSONObject metaData) {
+		super(view, type, dataObject, metaData);
 		this.view = view;
 		MenuHandler menuHandler = new MenuHandler.Adapter() {
 

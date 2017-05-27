@@ -13,6 +13,7 @@ users = [{
     "id": 1,
     "firstname": "Lukas",
     "lastname": "Meisegeier",
+    "length": 1.80,
     "city": "Berlin",
     "siblings": ["Marius", "Melissa"],
     "trivia": "Lorem ipsum"}]
@@ -31,6 +32,7 @@ class MyHandler(SimpleHTTPRequestHandler):
         meta = {}
         with open("meta_list.json", "r") as f:
             meta = json.loads(f.read())
+        print(users)
         result = {'data': {"users": users}, "meta": meta}
         self.wfile.write(bytes(json.dumps(result), "utf-8"))
 
@@ -49,6 +51,7 @@ class MyHandler(SimpleHTTPRequestHandler):
             if action['name'] == 'delete':
                 return self.delete_user(action)
 
+        print(users)
         self.send_response(200)
         self.send_header("Content-type", "text/json")
         self.end_headers()
@@ -85,13 +88,14 @@ class MyHandler(SimpleHTTPRequestHandler):
             meta = {}
             with open("meta_detail.json", "r") as f:
                 meta = json.loads(f.read())
-            empty_user = {'id': new_id, 'firstname': "", 'lastname': '', 'city': '', 'siblings': [], 'trivia': ""}
+            empty_user = {'id': new_id, 'firstname': "", 'lastname': '', 'city': '', 'siblings': [], 'trivia': "", "length": 0.00}
 
             result = {'data': empty_user, "meta": meta}
             self.wfile.write(bytes(json.dumps(result), "utf-8"))
 
     def save_user(self, action):
-        fields = ['id', 'firstname', 'lastname', 'city', 'siblings', 'trivia']
+        print(action)
+        fields = ['id', 'firstname', 'lastname', 'length', 'city', 'siblings', 'trivia']
         user = {}
         for field in fields:
             user[field] = action['fields'].get(field, "")

@@ -22,10 +22,12 @@ import org.apache.pivot.wtk.ScrollPane.ScrollBarPolicy;
 import org.apache.pivot.wtk.Separator;
 import org.apache.pivot.wtk.TableView;
 import org.apache.pivot.wtk.TableView.Column;
+import org.apache.pivot.wtk.validation.Validator;
 import org.apache.pivot.wtk.TableViewHeader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import gui.components.ComponentType;
 import gui.components.ComponentValueType;
 import gui.components.JSONComponent;
 import gui.components.JSONListComponent;
@@ -133,7 +135,8 @@ public class Renderer {
 		Font font = (Font) label.getStyles().get("font");
 		label.setMinimumWidth((int) (maxLabelWidth * (font.getSize2D() * 0.7)));
 		JSONComponent component = null;
-		if (metaData.getString("type").equals("String") || metaData.getString("type").equals("Integer")) {
+		if (metaData.getString("type").equals("String") || metaData.getString("type").equals("Integer")
+				|| metaData.getString("type").equals("Double")) {
 			component = buildDataTextfield(dataObject, metaData);
 		}
 		if (metaData.getString("type").equals("List")) {
@@ -157,43 +160,8 @@ public class Renderer {
 	}
 
 	private static JSONTableComponent buildDataTable(JSONObject dataObject, JSONObject metaData) {
-
 		ScrollPane scrollPane = new ScrollPane();
-		scrollPane.setPreferredHeight(100);
-		scrollPane.setHorizontalScrollBarPolicy(ScrollBarPolicy.FILL);
-		scrollPane.setVerticalScrollBarPolicy(ScrollBarPolicy.FILL_TO_CAPACITY);
-		scrollPane.setMaximumHeight(200);
-
-		List<Map<String, String>> tableData = new ArrayList<Map<String, String>>();
-		for (int i = 0; i < dataObject.getJSONArray("users").length(); i++) {
-			JSONObject rowData = dataObject.getJSONArray("users").getJSONObject(i);
-			HashMap<String, String> map = new HashMap<>();
-
-			for (int k = 0; k < metaData.getJSONArray("columns").length(); k++) {
-				JSONObject columnData = metaData.getJSONArray("columns").getJSONObject(k);
-				map.put(columnData.getString("name"), rowData.get(columnData.get("name").toString()).toString());
-			}
-			tableData.add(map);
-		}
-
-		TableView view = new TableView(tableData);
-		for (int i = 0; i < metaData.getJSONArray("columns").length(); i++) {
-			JSONObject actionData = metaData.getJSONArray("columns").getJSONObject(i);
-			Column column = new Column(actionData.getString("name"));
-			column.setHeaderData(actionData.getString("name"));
-			view.getColumns().add(column);
-		}
-		TableViewHeader header = new TableViewHeader(view);
-		header.getStyles().put("includeTrailingVerticalGridLine", true);
-		// header.setTableView(view);
-
-		scrollPane.setColumnHeader(header);
-
-		scrollPane.setVisible(true);
-		scrollPane.setEnabled(true);
-		scrollPane.setView(view);
-		JSONTableComponent tableComponent = new JSONTableComponent(metaData.getString("name"), view, scrollPane);
-
+		JSONTableComponent tableComponent = new JSONTableComponent(scrollPane, dataObject, metaData);
 		return tableComponent;
 	}
 
@@ -207,22 +175,10 @@ public class Renderer {
 	}
 
 	public static JSONTextAreaComponent buildTextArea(JSONObject dataObject, JSONObject metaData) {
-		String text = dataObject.getString(metaData.get("name").toString());
 		ScrollPane scrollPane = new ScrollPane();
-		scrollPane.setPreferredHeight(200);
-		scrollPane.setHorizontalScrollBarPolicy(ScrollBarPolicy.FILL);
-		scrollPane.setVerticalScrollBarPolicy(ScrollBarPolicy.FILL_TO_CAPACITY);
 		scrollPane.setMaximumWidth(componentWidth);
-		scrollPane.setMaximumHeight(100);
-
-		TextArea area = new TextArea();
-		area.setText(text);
-		JSONTextAreaComponent areaComponent = new JSONTextAreaComponent(metaData.getString("name"), area, scrollPane);
-
-		scrollPane.setVisible(true);
-		scrollPane.setEnabled(true);
-		scrollPane.setView(area);
-
+		JSONTextAreaComponent areaComponent = new JSONTextAreaComponent(scrollPane,
+				ComponentType.valueOf(metaData.getString("type").toUpperCase()), dataObject, metaData);
 		return areaComponent;
 	}
 
@@ -230,13 +186,9 @@ public class Renderer {
 		TextInput input = new TextInput();
 
 		input.setPreferredWidth(componentWidth);
-		input.setText(dataObject.get(metaData.getString("name")).toString());
-		if (metaData.has("editable")) {
-			if (!metaData.getBoolean("editable")) {
-				input.setEditable(false);
-			}
-		}
-		JSONTextComponent textComponent = new JSONTextComponent(metaData.getString("name"), input);
+
+		JSONTextComponent textComponent = new JSONTextComponent(input,
+				ComponentType.valueOf(metaData.getString("type").toUpperCase()), dataObject, metaData);
 		return textComponent;
 	}
 
@@ -256,7 +208,8 @@ public class Renderer {
 		}
 		listField.setPreferredWidth(componentWidth);
 		listField.setListData(stringList);
-		JSONListComponent listComponent = new JSONListComponent(metaData.getString("name"), listField);
+		JSONListComponent listComponent = new JSONListComponent(listField,
+				ComponentType.valueOf(metaData.getString("entry_type").toUpperCase()), dataObject, metaData);
 		return listComponent;
 
 	}

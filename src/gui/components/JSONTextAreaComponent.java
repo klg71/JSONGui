@@ -2,13 +2,28 @@ package gui.components;
 
 import org.apache.pivot.wtk.ScrollPane;
 import org.apache.pivot.wtk.TextArea;
+import org.apache.pivot.wtk.ScrollPane.ScrollBarPolicy;
 import org.json.JSONObject;
 
 public class JSONTextAreaComponent extends JSONComponent {
 
 	private TextArea area;
-	public JSONTextAreaComponent(String name, TextArea area, ScrollPane scrollPane) {
-		super(name, scrollPane);
+	public JSONTextAreaComponent(ScrollPane scrollPane, ComponentType type, JSONObject dataObject, JSONObject metaData) {
+		super(scrollPane, type,dataObject, metaData);
+		
+		scrollPane.setPreferredHeight(200);
+		scrollPane.setHorizontalScrollBarPolicy(ScrollBarPolicy.FILL);
+		scrollPane.setVerticalScrollBarPolicy(ScrollBarPolicy.FILL_TO_CAPACITY);
+		scrollPane.setMaximumHeight(100);
+
+		String text = dataObject.getString(metaData.get("name").toString());
+		TextArea area = new TextArea();
+		area.setText(text);
+
+		scrollPane.setVisible(true);
+		scrollPane.setEnabled(true);
+		scrollPane.setView(area);
+		
 		this.area = area;
 	}
 

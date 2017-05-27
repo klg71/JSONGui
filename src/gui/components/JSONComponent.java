@@ -6,6 +6,18 @@ import org.json.JSONObject;
 public abstract class JSONComponent {
 	protected String name;
 	protected Component component;
+	protected ComponentType componentType;
+	protected JSONObject dataObject;
+	protected JSONObject metaData;
+
+	public JSONComponent(Component component, ComponentType type, JSONObject dataObject, JSONObject metaData) {
+		super();
+		this.name = metaData.getString("name");
+		this.component = component;
+		this.componentType = type;
+		this.dataObject = dataObject;
+		this.metaData = metaData;
+	}
 	
 	public JSONObject getValue(ComponentValueType type){
 		JSONObject object = new JSONObject();
@@ -14,11 +26,6 @@ public abstract class JSONComponent {
 	}
 	public abstract void setValue(JSONObject object, ComponentValueType type);
 	
-	public JSONComponent(String name, Component component) {
-		super();
-		this.name = name;
-		this.component = component;
-	}
 	public String getName() {
 		return name;
 	}
