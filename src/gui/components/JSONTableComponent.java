@@ -1,12 +1,17 @@
 package gui.components;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.pivot.collections.HashMap;
 import org.apache.pivot.collections.List;
 import org.apache.pivot.collections.Map;
+import org.apache.pivot.wtk.ApplicationContext;
 import org.apache.pivot.wtk.Component;
+import org.apache.pivot.wtk.DesktopApplicationContext;
 import org.apache.pivot.wtk.ScrollPane;
 import org.apache.pivot.wtk.TableView;
 import org.apache.pivot.wtk.TableViewHeader;
@@ -14,6 +19,8 @@ import org.apache.pivot.wtk.ScrollPane.ScrollBarPolicy;
 import org.apache.pivot.wtk.TableView.Column;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import gui.JSONController;
 
 public class JSONTableComponent extends JSONComponent {
 
@@ -28,20 +35,12 @@ public class JSONTableComponent extends JSONComponent {
 		scrollPane.setVerticalScrollBarPolicy(ScrollBarPolicy.FILL_TO_CAPACITY);
 		scrollPane.setMaximumHeight(200);
 
-		List<Map<String, String>> tableData = new org.apache.pivot.collections.ArrayList<Map<String, String>>();
-		for (int i = 0; i < dataObject.getJSONArray("users").length(); i++) {
-			JSONObject rowData = dataObject.getJSONArray("users").getJSONObject(i);
-			HashMap<String, String> map = new HashMap<>();
+		TableView view = new TableView();
+		this.tableView = view;
+		
+		setValue(dataObject);
 
-			for (int k = 0; k < metaData.getJSONArray("columns").length(); k++) {
-				JSONObject columnData = metaData.getJSONArray("columns").getJSONObject(k);
-				map.put(columnData.getString("name"), rowData.get(columnData.get("name").toString()).toString());
-			}
-			tableData.add(map);
-		}
-
-		TableView view = new TableView(tableData);
-		java.util.ArrayList<ComponentType> columnTypes = new java.util.ArrayList<>();
+		columnTypes = new java.util.ArrayList<>();
 		for (int i = 0; i < metaData.getJSONArray("columns").length(); i++) {
 			JSONObject actionData = metaData.getJSONArray("columns").getJSONObject(i);
 			Column column = new Column(actionData.getString("name"));
@@ -59,13 +58,10 @@ public class JSONTableComponent extends JSONComponent {
 		scrollPane.setEnabled(true);
 		scrollPane.setView(view);
 		
-		
-		this.tableView = view;
-		columnTypes = new ArrayList<ComponentType>(columnTypes);
 	}
 
 	@Override
-	public JSONObject getValue(ComponentValueType type) {
+	public JSONObject getValue(ComponentValueType type) throws Exception {
 
 		JSONObject returnObject = super.getValue(type);
 		switch (type) {
@@ -110,9 +106,26 @@ public class JSONTableComponent extends JSONComponent {
 	}
 
 	@Override
-	public void setValue(JSONObject object, ComponentValueType type) {
-		// TODO Auto-generated method stub
-
+	public void setValue(JSONObject data) {
+		this.dataObject = data;
+		updateValue();
 	}
+	
+	public void updateValue(){
 
+		List<Map<String, String>> tableData = new org.apache.pivot.collections.ArrayList<Map<String, String>>();
+		for (int i = 0; i < dataObject.getJSONArray("users").length(); i++) {
+			JSONObject rowData = dataObject.getJSONArray("users").getJSONObject(i);
+			HashMap<String, String> map = new HashMap<>();
+
+			for (int k = 0; k < metaData.getJSONArray("columns").length(); k++) {
+				JSONObject columnData = metaData.getJSONArray("columns").getJSONObject(k);
+				map.put(columnData.getString("name"), rowData.get(columnData.get("name").toString()).toString());
+			}
+			tableData.add(map);
+		}
+		tableView.setTableData(tableData);
+	}
+	
+	
 }

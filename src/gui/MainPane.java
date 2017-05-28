@@ -46,22 +46,28 @@ public class MainPane extends SplitPane implements PaneListener {
 	}
 
 	@Override
-	public void actionPerformed(String actionName, Map<String,ComponentValueType> fields) {
+	public void actionPerformed(String actionName, Map<String, ComponentValueType> fields) {
 		JSONObject action = new JSONObject();
 		action.put("name", actionName);
 		JSONObject jsonFields = new JSONObject();
 
-		System.out.println(actionName);
-		for (Map.Entry<String, ComponentValueType> entry:fields.entrySet()) {
-			try {
-				jsonFields.put(entry.getKey(),componentController.getSingleResult(entry.getKey(), entry.getValue()).get("value"));
-			} catch (ComponentNotFoundException e) {
-				e.printStackTrace();
+		try {
+			for (Map.Entry<String, ComponentValueType> entry : fields.entrySet()) {
+				try {
+					jsonFields.put(entry.getKey(),
+							componentController.getSingleResult(entry.getKey(), entry.getValue()).get("value"));
+				} catch (ComponentNotFoundException e) {
+					e.printStackTrace();
+				}
 			}
-		}
-		action.put("fields", jsonFields);
-		for (Context context : contexts) {
-			context.actionPerformed(action);
+			action.put("fields", jsonFields);
+			for (Context context : contexts) {
+				context.actionPerformed(action);
+			}
+			componentController.resetComponents();
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -77,6 +83,7 @@ public class MainPane extends SplitPane implements PaneListener {
 		for (Context context : contexts) {
 			context.navigationPerformed(navigation);
 		}
+		componentController.resetComponents();
 	}
 
 }

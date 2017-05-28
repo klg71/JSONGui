@@ -8,6 +8,8 @@ import org.apache.pivot.wtk.TextInput;
 import org.apache.pivot.wtk.validation.Validator;
 import org.json.JSONObject;
 
+import gui.TypeValidator;
+
 public class JSONTextComponent extends JSONComponent {
 
 	private TextInput component;
@@ -16,57 +18,20 @@ public class JSONTextComponent extends JSONComponent {
 			JSONObject metaData) {
 		super(component, type, dataObject, metaData);
 		this.component = component;
-
-		switch (componentType) {
-		case STRING:
-			component.setText(dataObject.getString(metaData.getString("name")));
-			break;
-		case DOUBLE:
-			Double value = dataObject.getDouble(metaData.getString("name"));
-			component.setText(String.format("%." + Integer.toString(metaData.getInt("precision")) + "f", value));
-			break;
-		case INTEGER:
-			component.setText(Integer.toString(dataObject.getInt(metaData.getString("name"))));
-			break;
-		}
-
-		if (metaData.has("editable")) {
-			if (!metaData.getBoolean("editable")) {
-				component.setEditable(false);
-			}
-		}
-		component.setValidator(new Validator() {
-
-			@Override
-			public boolean isValid(String s) {
-				try {
-					switch (componentType) {
-					case DOUBLE:
-						Double.parseDouble(s.replace(",", "."));
-						break;
-					case INTEGER:
-						Integer.parseInt(s);
-						break;
-					case STRING:
-						break;
-					default:
-						break;
-
-					}
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-					return false;
-				}
-				return true;
-			}
-		});
+		updateValue();
+		component.setValidator(new TypeValidator(type));
 
 	}
 
 	@Override
-	public JSONObject getValue(ComponentValueType type) {
+	public JSONObject getValue(ComponentValueType type) throws Exception {
 		JSONObject object = new JSONObject(type);
 		object.put("name", name);
+		if(!component.isTextValid()){
+			 new org.apache.pivot.wtk.Alert("Please enter a valid String").open(component.getWindow());
+			 throw new Exception("Invalid input");
+		}
+		
 		switch (type) {
 		case VALUE:
 			switch (componentType) {
@@ -90,9 +55,33 @@ public class JSONTextComponent extends JSONComponent {
 	}
 
 	@Override
-	public void setValue(JSONObject object, ComponentValueType type) {
-		// TODO Auto-generated method stub
+	public void setValue(JSONObject data) {
+		this.dataObject = data;
+		updateValue();
+	}
 
+	@Override
+	public void updateValue() {
+
+		switch (componentType) {
+		case STRING:
+			component.setText(dataObject.getString(metaData.getString("name")));
+			break;
+		case DOUBLE:
+			Double value = dataObject.getDouble(metaData.getString("name"));
+			component.setText(String.format("%." + Integer.toString(metaData.getInt("precision")) + "f", value));
+			break;
+		case INTEGER:
+			component.setText(Integer.toString(dataObject.getInt(metaData.getString("name"))));
+			break;
+		}
+
+		if (metaData.has("editable")) {
+			if (!metaData.getBoolean("editable")) {
+				component.setEditable(false);
+			}
+		}
+		
 	}
 
 }

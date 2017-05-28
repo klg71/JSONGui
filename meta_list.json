@@ -18,7 +18,8 @@
           "name":"lastname",
 			    "type":"String"
 			  }
-		  ]
+		  ],
+      "update":2000
 		}
 	],
 "actions":

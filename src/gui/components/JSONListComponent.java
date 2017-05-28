@@ -2,25 +2,32 @@ package gui.components;
 
 import org.apache.pivot.collections.List;
 import org.apache.pivot.wtk.Action;
-import org.apache.pivot.wtk.ApplicationContext;
 import org.apache.pivot.wtk.Component;
 import org.apache.pivot.wtk.ListView;
 import org.apache.pivot.wtk.Menu;
-import org.apache.pivot.wtk.MenuBar;
 import org.apache.pivot.wtk.MenuHandler;
-import org.apache.pivot.wtk.Prompt;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import gui.Renderer;
 import gui.SimpleDialog;
 
 public class JSONListComponent extends JSONComponent {
 
 	private ListView view;
 
-	public JSONListComponent(ListView view, ComponentType type, JSONObject dataObject, JSONObject metaData) {
-		super(view, type, dataObject, metaData);
-		this.view = view;
+	public JSONListComponent(ListView listField, ComponentType type, JSONObject dataObject, JSONObject metaData) {
+		super(listField, type, dataObject, metaData);
+
+		this.view = listField;
+
+		updateValue();
+		createMenu();
+		createUpdateTimer();
+	}
+
+	private void createMenu() {
+		ComponentType type = this.componentType;
 		MenuHandler menuHandler = new MenuHandler.Adapter() {
 
 			@Override
@@ -34,15 +41,15 @@ public class JSONListComponent extends JSONComponent {
 					@Override
 					public void perform(Component source) {
 						SimpleDialog simpleDialog = new SimpleDialog("Add Entry", new SimpleDialog.Callback() {
-			
+
 							@Override
 							public void addEntry(String entry) {
 								List<String> data = (List<String>) view.getListData();
 								data.add(entry);
 								view.setListData(data);
 							}
-							
-						});
+
+						}, type);
 						simpleDialog.open(view.getWindow());
 					}
 				});
@@ -70,7 +77,7 @@ public class JSONListComponent extends JSONComponent {
 	}
 
 	@Override
-	public JSONObject getValue(ComponentValueType type) {
+	public JSONObject getValue(ComponentValueType type) throws Exception {
 
 		JSONObject object = super.getValue(type);
 		switch (type) {
@@ -90,8 +97,38 @@ public class JSONListComponent extends JSONComponent {
 	}
 
 	@Override
-	public void setValue(JSONObject object, ComponentValueType type) {
-		// TODO Auto-generated method stub
+	public void setValue(JSONObject data) {
+		this.dataObject = data;
+	}
+
+	@Override
+	public void updateValue() {
+		@SuppressWarnings("rawtypes")
+		org.apache.pivot.collections.List stringList = null;
+		switch (this.componentType) {
+		case STRING:
+			stringList = new org.apache.pivot.collections.ArrayList<String>();
+			for (int k = 0; k < dataObject.getJSONArray(metaData.getString("name")).length(); k++) {
+				stringList.add(dataObject.getJSONArray(metaData.getString("name")).getString(k));
+			}
+			break;
+		case DOUBLE:
+			stringList = new org.apache.pivot.collections.ArrayList<Double>();
+			for (int k = 0; k < dataObject.getJSONArray(metaData.getString("name")).length(); k++) {
+				stringList.add(dataObject.getJSONArray(metaData.getString("name")).getDouble(k));
+			}
+			break;
+		case INTEGER:
+			stringList = new org.apache.pivot.collections.ArrayList<Integer>();
+			for (int k = 0; k < dataObject.getJSONArray(metaData.getString("name")).length(); k++) {
+				stringList.add(dataObject.getJSONArray(metaData.getString("name")).getInt(k));
+			}
+			break;
+
+		}
+
+		view.setPreferredWidth(Renderer.componentWidth);
+		view.setListData(stringList);
 
 	}
 

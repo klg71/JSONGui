@@ -28,7 +28,7 @@ public class JSONTextAreaComponent extends JSONComponent {
 	}
 
 	@Override
-	public JSONObject getValue(ComponentValueType type) {
+	public JSONObject getValue(ComponentValueType type) throws Exception {
 		JSONObject object = super.getValue(type);
 		switch(type){
 		case VALUE:
@@ -41,8 +41,15 @@ public class JSONTextAreaComponent extends JSONComponent {
 	}
 
 	@Override
-	public void setValue(JSONObject object, ComponentValueType type) {
-		area.setText(object.getString("value"));
+	public void setValue(JSONObject data) {
+		this.dataObject = data;
+		updateValue();
+	}
+
+	@Override
+	public void updateValue() {
+		area.setText(dataObject.getString(metaData.get("name").toString()));
+		
 	}
 
 }

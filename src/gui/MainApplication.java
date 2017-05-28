@@ -33,7 +33,7 @@ public class MainApplication implements Application, Context {
 	@Override
 	public void startup(Display disp, Map<String, String> arg1) throws Exception {
 
-		jsonController = new JSONController();
+		jsonController = JSONController.getInstance("http://127.0.0.1:8001");
 		
 		window = new Window();
 		this.display = disp;
@@ -48,6 +48,7 @@ public class MainApplication implements Application, Context {
 	}
 	
 	private void reloadWindow(JSONObject received){
+		
 		JSONObject dataObject = received.getJSONObject("data");
 		JSONObject metaDataObject = received.getJSONObject("meta");
 		System.out.println(received.toString());

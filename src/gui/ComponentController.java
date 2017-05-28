@@ -31,12 +31,19 @@ public class ComponentController {
 	public void addComponent(String name, JSONComponent component) {
 		componentMap.put(name, component);
 	}
+	
+	public void resetComponents(){
+		for(JSONComponent comp: componentMap.values()){
+			comp.stopUpdate();
+		}
+		componentMap.clear();
+	}
 
-	public JSONObject getSingleResult(String name,ComponentValueType type) throws ComponentNotFoundException {
+	public JSONObject getSingleResult(String name,ComponentValueType type) throws Exception {
 		JSONObject result = null;
-		try {
+		if (componentMap.containsKey(name)){
 			result = componentMap.get(name).getValue(type);
-		} catch (Exception e) {
+		} else {
 			throw new ComponentNotFoundException(name);
 		}
 		return result;

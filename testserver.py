@@ -16,6 +16,7 @@ users = [{
     "length": 1.80,
     "city": "Berlin",
     "siblings": ["Marius", "Melissa"],
+    "numbers":[1.13, 169.92, 1.71263],
     "trivia": "Lorem ipsum"}]
 
 
@@ -50,6 +51,8 @@ class MyHandler(SimpleHTTPRequestHandler):
                 return self.save_user(action)
             if action['name'] == 'delete':
                 return self.delete_user(action)
+            if action['name'] == 'update':
+                return self.update(action)
 
         print(users)
         self.send_response(200)
@@ -88,14 +91,14 @@ class MyHandler(SimpleHTTPRequestHandler):
             meta = {}
             with open("meta_detail.json", "r") as f:
                 meta = json.loads(f.read())
-            empty_user = {'id': new_id, 'firstname': "", 'lastname': '', 'city': '', 'siblings': [], 'trivia': "", "length": 0.00}
+            empty_user = {'id': new_id, 'firstname': "", 'lastname': '', 'city': '', 'siblings': [], 'trivia': "", "length": 0.00, 'numbers': []}
 
             result = {'data': empty_user, "meta": meta}
             self.wfile.write(bytes(json.dumps(result), "utf-8"))
 
     def save_user(self, action):
         print(action)
-        fields = ['id', 'firstname', 'lastname', 'length', 'city', 'siblings', 'trivia']
+        fields = ['id', 'firstname', 'lastname', 'length', 'city', 'siblings', 'trivia', 'numbers']
         user = {}
         for field in fields:
             user[field] = action['fields'].get(field, "")
@@ -140,6 +143,14 @@ class MyHandler(SimpleHTTPRequestHandler):
             meta = json.loads(f.read())
         result = {'data': {"users": users}, "meta": meta}
         self.wfile.write(bytes(json.dumps(result), "utf-8"))
+
+    def update(self, action):
+        if action['field'] == 'users':
+            self.send_response(200)
+            self.send_header("Content-type", "text/json")
+            self.end_headers()
+            result = {'data': {"users": users}}
+            self.wfile.write(bytes(json.dumps(result), "utf-8"))
 
 
 server = HTTPServer(('', 8001), MyHandler)

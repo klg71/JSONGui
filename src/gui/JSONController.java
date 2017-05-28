@@ -1,16 +1,13 @@
 package gui;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.function.Consumer;
 
 import org.apache.http.HttpEntity;
@@ -26,12 +23,30 @@ import org.json.JSONObject;
 public class JSONController {
 
 	private String host;
-
-	public JSONController(String host) {
+	
+	private static JSONController instance;
+	
+	public static JSONController getInstance(String host){
+		if(instance==null){
+			instance = new JSONController(host);
+		}
+		else {
+			instance.host = host;
+		}
+		return instance;
+	}
+	public static JSONController getInstance() throws Exception{
+		if(instance==null){
+			throw new Exception("No instance created before");
+		}
+		return instance;
+	}
+	private JSONController(String host) {
+		
 		this.host = host;
 	}
 
-	public JSONController() {
+	private JSONController() {
 		this.host = ("http://127.0.0.1:8001");
 	}
 

@@ -32,6 +32,12 @@
 		  "editable":true,
 		  "entry_type":"String"
 		},
+		{ "name":"numbers",
+		  "displayname":"Numbers",
+		  "type":"List",
+		  "editable":true,
+		  "entry_type":"Double"
+		},
 		{ "name":"trivia",
 		  "displayname":"Trivia",
 		  "type":"String"
@@ -56,6 +62,10 @@
           },
           {
             "name":"length",
+            "type":"value"
+          },
+          {
+            "name":"numbers",
             "type":"value"
           },
           {

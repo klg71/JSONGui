@@ -37,7 +37,7 @@ import gui.components.JSONTextComponent;
 
 public class Renderer {
 
-	private static int componentWidth = 200;
+	public static final int componentWidth = 200;
 
 	public static int getMaxLabelWidth(JSONArray metaObject) {
 		int length = 0;
@@ -59,7 +59,9 @@ public class Renderer {
 		mainPane.setSplitRatio(0.2f);
 		// mainPane.setLocked(true);
 		BoxPane navigationPane = new BoxPane(Orientation.VERTICAL);
-		navigationPane.add(new Separator("Navigation"));
+		Separator navigation = new Separator("Navigation");
+		navigation.getStyles().put("font","{size:14, bold:true}");
+		navigationPane.add(navigation);
 		for (int i = 0; i < metaObject.getJSONArray("navigation").length(); i++) {
 			JSONObject metaData = metaObject.getJSONArray("navigation").getJSONObject(i);
 			PushButton navigationButton = new PushButton(metaData.getString("displayname"));
@@ -73,7 +75,9 @@ public class Renderer {
 		mainPane.setLeft(new Border(navigationPane));
 
 		BoxPane contentPane = new BoxPane(Orientation.VERTICAL);
-		contentPane.add(new Separator(metaObject.getString("title")));
+		Separator title = new Separator(metaObject.getString("title"));
+		title.getStyles().put("font","{size:14, bold:true}");
+		contentPane.add(title);
 		contentPane.add(buildComponentPane(dataObject, metaObject.getJSONArray("data"), controller));
 
 		contentPane.add(buildActionPane(dataObject, metaObject.getJSONArray("actions"), actionController));
@@ -193,24 +197,10 @@ public class Renderer {
 	}
 
 	public static JSONComponent buildDataList(JSONObject dataObject, JSONObject metaData) {
-		if (metaData.getString("entry_type").equals("String")) {
-			return buildDataStringList(dataObject, metaData);
-		}
-		return null;
-	}
 
-	public static JSONComponent buildDataStringList(JSONObject dataObject, JSONObject metaData) {
-		org.apache.pivot.collections.List<String> stringList = new org.apache.pivot.collections.ArrayList<>();
 		ListView listField = new ListView();
-
-		for (int k = 0; k < dataObject.getJSONArray(metaData.getString("name")).length(); k++) {
-			stringList.add(dataObject.getJSONArray(metaData.getString("name")).getString(k));
-		}
-		listField.setPreferredWidth(componentWidth);
-		listField.setListData(stringList);
 		JSONListComponent listComponent = new JSONListComponent(listField,
 				ComponentType.valueOf(metaData.getString("entry_type").toUpperCase()), dataObject, metaData);
 		return listComponent;
-
 	}
 }
